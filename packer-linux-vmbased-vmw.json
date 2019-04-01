@@ -1,0 +1,78 @@
+{
+    "variables": {
+        "format": "vmx",
+        "iso_checksum": "7f0eb16e287e732af4046359184cf6f7",
+        "iso_url": "file:/Users/nicolas/Downloads/rhel-server-7.6-x86_64-dvd.iso",
+        "remote_datastore": "datastore1",
+        "remote_host": "esx01",
+        "remote_password": "{{ vault `/secret/data/packer/esx` `password`}}",
+        "remote_username": "{{ vault `/secret/data/packer/esx` `username`}}",
+        "version": "0.1",
+        "vm_name": "packer-test"
+    },
+    
+    "sensitive-variables": [
+       "remote_password"
+    ],  
+
+    "builders": [
+      { 
+        "type": "vmware-vmx",
+        
+        "floppy_files": [
+            "ks.cfg"
+        ],
+        
+        "boot_command": [
+          "<tab> inst.text inst.ks=floppy <enter><wait>"
+        ],
+
+        "boot_wait": "10s",
+        "cores": "1",
+        "cpus": "2",
+        "disk_size": "20000",
+        "disk_type_id": "zeroedthick",
+        "display_name": "{{ user `vm_name` }}-{{ user `version` }}",
+        "format": "{{ user `format` }}",
+        "guest_os_type": "rhel7-64",
+        "http_directory": "http",
+        "keep_registered": "true",
+        "memory": "4096",
+        "output_directory": "output-packer",
+        "remote_datastore": "{{ user `remote_datastore`}}",
+        "remote_host": "{{ user `remote_host`}}",
+        "remote_password": "{{ user `remote_password`}}",
+        "remote_type": "esx5",
+        "remote_username": "{{ user `remote_username`}}",
+        "shutdown_command": "shutdown -h now",
+        "skip_compaction": true,
+        "skip_export": "true",
+        "source_path": "{{ user ìmage_source_path`}}",
+        "ssh_password": "packer",
+        "ssh_username": "packer",
+        "vm_name": "{{ user `vm_name` }}-{{ user `version` }}",
+        "vmx_data": {
+            "ethernet0.networkName": "packer"
+        },
+        "vnc_disable_password": "true",
+        "vnc_port_max": "6199",
+        "vnc_port_min": "5900"
+      }
+    ],
+   
+    "provisioners": [
+
+    ],
+
+    "post-processors": [
+        {
+            "type": "vsphere-template",
+            "host": "{{ user `vcenter_hostname`}}",
+            "insecure": "true",
+            "username": "{{ user `vcenter_username`}}",
+            "password": "{{ user `vcenter_password`}}",
+            "datacenter": "{{ user `vmw_datacenter`}}",
+            "folder": "{{ user `vcenter_folder`}}"
+        }
+    ] 
+  }

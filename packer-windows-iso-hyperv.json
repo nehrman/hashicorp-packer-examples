@@ -1,0 +1,59 @@
+{
+    "variables": {
+        "iso_checksum": "7f0eb16e287e732af4046359184cf6f7",
+        "iso_url": "file:/Users/nicolas/Downloads/rhel-server-7.6-x86_64-dvd.iso",
+        "password": "password",
+        "username": "admin",
+        "version": "0.1",
+        "vm_name": "packer-test",
+        "configuration_version": "8.0",
+        "disk_size": "61440",
+        "generation": "2",
+        "output_directory": "",
+        "ram_size": "4096",
+        "cpu": "2",
+        "secondary_iso_images": "",
+        "switch_name": ""
+    },
+    
+    "sensitive-variables": [
+       "password"
+    ],  
+
+    "builders": [
+      { 
+        "type": "hyperv-iso",
+        
+        "floppy_files": [],
+        
+        "boot_command": [
+          "<tab> inst.text inst.ks=floppy <enter><wait>"
+        ],
+
+        "boot_wait": "10s",
+        "communicator": "winrm",
+        "configuration_version": "{{ user `configuration_version` }}",
+        "cpu": "2",
+        "disk_size": "{{ user `disk_size` }}",
+        "generation": "{{ user `generation` }}",
+
+        "http_directory": "http",
+        "iso_checksum": "{{ user `iso_checksum` }}",
+        "iso_checksum_type": "md5",
+        "iso_url": "{{ user `iso_url` }}",
+        "output_directory": "output-packer",
+        "ram_size": "4096",
+        "secondary_iso_images": "",
+        "shutdown_command": "shutdown -h now",
+        "switch_name": "",
+        "winrm_password": "packer",
+        "winrm_username": "packer",
+        "winrm_timeout": "1h",
+        "vm_name": "{{ user `vm_name` }}-{{ user `version` }}"
+      }
+    ],
+   
+    "provisioners": [
+
+    ]
+  }
