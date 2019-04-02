@@ -1,7 +1,5 @@
 {
     "variables": {
-        "iso_checksum": "7f0eb16e287e732af4046359184cf6f7",
-        "iso_url": "file:/Users/nicolas/Downloads/rhel-server-7.6-x86_64-dvd.iso",
         "password": "password",
         "username": "admin",
         "version": "0.1",
@@ -22,13 +20,8 @@
 
     "builders": [
       { 
-        "type": "hyperv-iso",
+        "type": "hyperv-vmcx",
         
-        "floppy_files": [],
-        
-        "boot_command": [
-          "<tab> inst.text inst.ks=floppy <enter><wait>"
-        ],
 
         "boot_wait": "10s",
         "communicator": "winrm",
@@ -38,9 +31,6 @@
         "generation": "{{ user `generation` }}",
 
         "http_directory": "http",
-        "iso_checksum": "{{ user `iso_checksum` }}",
-        "iso_checksum_type": "md5",
-        "iso_url": "{{ user `iso_url` }}",
         "output_directory": "output-packer",
         "ram_size": "4096",
         "secondary_iso_images": "",

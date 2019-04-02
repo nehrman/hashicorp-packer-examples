@@ -1,0 +1,88 @@
+{
+    "variables": {
+        "iso_checksum_url": "https://test/rhel.iso.md5sum",
+        "iso_checksum_type": "md5",
+        "iso_url": "https://test/rhel.iso",
+        "datastore": "datastore1",
+        "host": "esx01",
+        "vcenter": "vcenter",
+        "vc_password": "toto",
+        "vc_username": "tutu",
+        "ssh_password": "JanCl0ud",
+        "ssh_username": "root",
+        "version": "0.1",
+        "vm_name": "packer-test",
+        "notes": "created by packer",
+        "vm_version": "10",
+        "guest_os_type": "rhel7-64",
+        "cpus": "2",
+        "ram": "4096",
+        "disk_controller_type": "pvscsi",
+        "disk_size": "51200",
+        "thin_provision": "true",
+        "network": "ACP310"
+    },
+    
+    "sensitive-variables": [
+       "remote_password"
+    ], 
+
+    "builders": [
+      {
+        "type": "vsphere-iso",
+
+        "iso_url": "{{ user `iso_url` }}",
+        "iso_checksum_url": "{{ user `iso_checksum_url` }}",
+        "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+  
+        "vcenter_server":      "{{ user `vcenter` }}",
+        "datacenter":          "{{ user `datacenter` }}",
+        "username":            "{{ user `vc_username` }}",
+        "password":            "{{ user `vc_password` }}",
+        "insecure_connection": "true",
+  
+        "vm_name": "{{ user `vm_name` }}",
+        "host":     "{{ user `host` }}",
+        "datastore": "{{ user `idatastore` }}",
+
+        "notes": "{{ user `notes` }}",
+  
+        "guest_os_type": "{{ user `guest_os_type` }}",
+        "vm_version": "{{ user `vm_version` }}",
+  
+        "ssh_username": "{{ user `ssh_username` }}",
+        "ssh_password": "{{ user `ssh_password` }}",
+  
+        "CPUs":             "{{ user `cpus` }}",
+        "RAM":              "{{ user `ram` }}",
+        "RAM_reserve_all": true,
+  
+        "disk_controller_type":  "{{ user `disk_controller_type` }}",
+        "disk_size":        "{{ user `disk_size` }}",
+        "disk_thin_provisioned": "{{ user `thin_provision` }}",
+  
+        "network_card": "vmxnet3",
+        "network":      "{{ user `network` }}",
+  
+        "iso_paths": [
+          "[datastore1] ISO/ubuntu-16.04.3-server-amd64.iso"
+        ],
+        "floppy_files": [
+          "{{template_dir}}/preseed.cfg"
+        ],
+
+        "boot_wait": "10s",
+
+        "boot_command": [
+          "<enter><wait><f6><wait><esc><wait>"
+        ]
+      }
+    ],
+  
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": ["ls /"]
+      }
+    ]
+  }
