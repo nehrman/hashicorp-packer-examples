@@ -1,59 +1,66 @@
 {
-    "variables": {
-        "iso_checksum": "7f0eb16e287e732af4046359184cf6f7",
-        "iso_url": "file:/Users/nicolas/Downloads/rhel-server-7.6-x86_64-dvd.iso",
-        "password": "password",
-        "username": "admin",
-        "version": "0.1",
-        "vm_name": "packer-test",
-        "configuration_version": "8.0",
-        "disk_size": "61440",
-        "generation": "2",
-        "output_directory": "",
-        "ram_size": "4096",
-        "cpu": "2",
-        "secondary_iso_images": "",
-        "switch_name": ""
-    },
-    
-    "sensitive-variables": [
-       "password"
-    ],  
+  "builders": [
+    {
+      "boot_command": [
+      "a<enter><wait>a<enter><wait>a<enter><wait>a<enter>"
+      ],
+      "boot_wait": "1s",
+	    "communicator": "winrm",
+      "configuration_version": "{{ user `configuration_version` }}",
+      "cpus": "2",
+      "disk_size": "{{ user `disk_size` }}",
+      "floppy_files": [],
+      "generation": "{{ user `generation` }}",
+      "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "iso_checksum_type": "md5",
+      "iso_url": "{{ user `iso_url` }}",
+      "memory": "4096",
+      "output_directory": "{{ user `output_directory` }}{{timestamp}}",
+      "secondary_iso_images": [
+        "{{ user `secondary_iso_images` }}"
+      ],
+      "switch_name": "{{ user `switch_name` }}",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "type": "hyperv-iso",
+      "vm_name": "{{ user `vm_name` }}-{{ user `platform` }}-{{ user `version` }}",
+      "winrm_password": "{{ user `password` }}",
+      "winrm_timeout": "1h",
+      "winrm_username": "{{ user `username` }}",
+      "skip_export": "true",
+      "skip_compaction": "{{ user `skip_compaction` }}",
+      "use_fixed_vhd_format": "{{ user `fixed_vhd` }}"
+    }
+  ],
 
-    "builders": [
-      { 
-        "type": "hyperv-iso",
-        
-        "floppy_files": [],
-        
-        "boot_command": [
-          "<tab> inst.text inst.ks=floppy <enter><wait>"
-        ],
-
-        "boot_wait": "10s",
-        "communicator": "winrm",
-        "configuration_version": "{{ user `configuration_version` }}",
-        "cpu": "2",
-        "disk_size": "{{ user `disk_size` }}",
-        "generation": "{{ user `generation` }}",
-
-        "http_directory": "http",
-        "iso_checksum": "{{ user `iso_checksum` }}",
-        "iso_checksum_type": "md5",
-        "iso_url": "{{ user `iso_url` }}",
-        "output_directory": "output-packer",
-        "ram_size": "4096",
-        "secondary_iso_images": "",
-        "shutdown_command": "shutdown -h now",
-        "switch_name": "",
-        "winrm_password": "packer",
-        "winrm_username": "packer",
-        "winrm_timeout": "1h",
-        "vm_name": "{{ user `vm_name` }}-{{ user `version` }}"
-      }
-    ],
-   
-    "provisioners": [
-
+  "provisioners": [{
+    "type": "powershell",
+    "inline": [
+      "C:\\windows\\system32\\Sysprep\\Sysprep.exe /mode:vm /quiet /quit /unattend:E:\\sysprep-unattend.xml"
     ]
   }
+  ],
+
+  "sensitive-variables": [
+    "password"
+  ],
+  "variables": {
+    "configuration_version": "8.0",
+    "cpu": "2",
+    "disk_size": "61440",
+    "generation": "",
+    "iso_checksum": "70721288BBCDFE3239D8F8C0FAE55F1F",
+    "iso_url": "C:\\packer\\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.iso",
+    "output_directory": "D:\\VirtualMachines\\",
+    "password": "PackerAdminP@ssw0rd",
+    "ram_size": "4096",
+    "secondary_iso_images": ".\\Unattend_uefi.iso",
+    "switch_name": "Packer - Virtual Switch",
+    "username": "PackerAdmin",
+    "version": "0.1",
+    "vm_name": "packer-test",
+    "platform": "",
+    "fixed_vhd": "",
+    "skip_compaction": ""
+  }
+}

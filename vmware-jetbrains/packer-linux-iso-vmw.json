@@ -20,7 +20,7 @@
         "disk_controller_type": "pvscsi",
         "disk_size": "51200",
         "thin_provision": "true",
-        "network": "ACP310"
+        "network": ""
     },
     
     "sensitive-variables": [

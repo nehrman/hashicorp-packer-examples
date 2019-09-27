@@ -1,86 +1,106 @@
 {
-    "variables": {
-        "format": "vmx",
-        "iso_checksum": "7f0eb16e287e732af4046359184cf6f7",
-        "iso_url": "file:/Users/nicolas/Downloads/rhel-server-7.6-x86_64-dvd.iso",
-        "remote_datastore": "datastore1",
-        "esx_host": "esx01",
-        "esx_password": "{{ vault `/secret/data/packer/esx` `password`}}",
-        "esx_username": "{{ vault `/secret/data/packer/esx` `username`}}",
-        "vcenter_host": "esx01",
-        "vcenter_password": "{{ vault `/secret/data/packer/vcenter` `password`}}",
-        "vcenter_username": "{{ vault `/secret/data/packer/vcenter` `username`}}",
-        "version": "0.1",
-        "vm_name": "packer-test"
-    },
-    
-    "sensitive-variables": [
-       "remote_password"
-    ],  
+  "variables": {
+      "format": "vmx",
+      "iso_checksum_url": "",
+      "iso_url": "",
+      "remote_datastore": "",
+      "esx_host": "",
+      "esx_private_key": "",
+      "esx_username": "",
+      "vcenter_host": "",
+      "vcenter_password": "{{ vault `/secret/ptfe/vmware` `adminpwd`}}",
+      "vcenter_username": "{{ vault `/secret/ptfe/vmware` `admin`}}",
+      "vcenter_folder": "",
+      "vmw_datacenter": "",
+      "version": "0.1",
+      "disk_size": "51200",
+      "vm_name": "packer-test",
+      "guest_os_type": "rhel7-64",
+      "ssh_username": "packer",
+      "ssh_password": "packer"
+  },
+  
+  "sensitive-variables": [
+     "vcenter_password",
+     "esx_private_key",
+     "ssh_password"
+  ],  
 
-    "builders": [
-      { 
-        "type": "vmware-iso",
-        
-        "floppy_files": [
-            "ks.cfg"
-        ],
-        
-        "boot_command": [
-          "<tab> inst.text inst.ks=hd:fd0:/ks.cfg <enter><wait>",
-          "<wait10><enter>",
-          "<wait10><esc>"
-        ],
+  "builders": [
+    { 
+      "type": "vmware-iso",
+      
+      "floppy_files": [
+          "ks.cfg"
+      ],
+      
+      "boot_command": [
+        "<tab> inst.text inst.ks=hd:fd0:/ks.cfg ip=192.168.94.100::192.168.94.1:255.255.255.0:packer-test:ens33:none nameserver=192.168.94.1<enter><wait>",
+        "<wait10><enter>"
+      ],
 
-        "boot_wait": "10s",
-        "cores": "1",
-        "cpus": "2",
-        "disk_size": "20000",
-        "disk_type_id": "zeroedthick",
-        "display_name": "{{ user `vm_name` }}-{{ user `version` }}",
-        "format": "{{ user `format` }}",
-        "guest_os_type": "rhel7-64",
-        "http_directory": "http",
-        "iso_checksum": "{{ user `iso_checksum` }}",
-        "iso_checksum_type": "md5",
-        "iso_url": "{{ user `iso_url` }}",
-        "keep_registered": "true",
-        "memory": "4096",
-        "output_directory": "output-packer",
-        "remote_datastore": "{{ user `remote_datastore`}}",
-        "remote_host": "{{ user `esx_host`}}",
-        "remote_password": "{{ user `esx_password`}}",
-        "remote_type": "esx5",
-        "remote_username": "{{ user `esx_username`}}",
-        "shutdown_command": "shutdown -h now",
-        "skip_compaction": true,
-        "skip_export": "true",
-        "ssh_password": "packer",
-        "ssh_username": "packer",
-        "ssh_timeout": "1h",
-        "vm_name": "{{ user `vm_name` }}-{{ user `version` }}",
-        "vmx_data": {
-            "ethernet0.networkName": "packer"
-        },
-        "vnc_disable_password": "true",
-        "vnc_port_max": "6199",
-        "vnc_port_min": "5900"
+      "boot_wait": "10s",
+      "cores": "1",
+      "cpus": "2",
+      "disk_size": "{{ user `disk_size`}}",
+      "disk_type_id": "zeroedthick",
+      "display_name": "{{ user `vm_name` }}-{{ user `version` }}-{{ timestamp }}",
+      "format": "{{ user `format` }}",
+      "guest_os_type": "{{ user `guest_os_type` }}",
+      "http_directory": "http",
+      "iso_checksum_url": "{{ user `iso_checksum_url` }}",
+      "iso_checksum_type": "md5",
+      "iso_url": "{{ user `iso_url` }}",
+      "keep_registered": "true",
+      "memory": "4096",
+      "output_directory": "output-packer",
+      "remote_cache_datastore": "{{ user `remote_datastore`}}",
+      "remote_datastore": "{{ user `remote_datastore`}}",
+      "remote_host": "{{ user `esx_host`}}",
+      "remote_private_key_file": "{{ user `esx_private_key`}}",
+      "remote_type": "esx5",
+      "remote_username": "{{ user `esx_username`}}",
+      "shutdown_command": "shutdown -h now",
+      "skip_compaction": "true",
+      "skip_export": "true",
+      "ssh_password": "{{ user `ssh_password` }}",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "ssh_timeout": "1h",
+      "vm_name": "{{ user `vm_name` }}-{{ user `version` }}-{{ timestamp }}",
+      "vmx_data": {
+          "ethernet0.startConnected": "TRUE",
+          "ethernet0.shares": "normal",
+          "ethernet0.dvs.portgroupId": "dvportgroup-126",
+          "ethernet0.addresstype": "generated",
+          "ethernet0.addressType": "vpx",
+          "ethernet0.present": "TRUE",
+          "ethernet0.generatedAddressOffset": "0",
+          "ethernet0.dvs.switchId": "50 0c e5 17 fc f2 a3 ae-5d 50 90 91 dc 2f 13 d3"
+      },
+      "vnc_disable_password": "true",
+      "vnc_port_max": "6199",
+      "vnc_port_min": "5900"
+    }
+  ],
+ 
+  "provisioners": [
+{
+  "type": "shell",
+        "inline": [
+           "echo youpi"
+        ]
+      } 
+  ],
+
+  "post-processors": [
+      {
+          "type": "vsphere-template",
+          "host": "{{ user `vcenter_host`}}",
+          "insecure": "true",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "{{ user `vmw_datacenter`}}",
+          "folder": "{{ user `vcenter_folder`}}"
       }
-    ],
-   
-    "provisioners": [
-
-    ],
-
-    "post-processors": [
-        {
-            "type": "vsphere-template",
-            "host": "{{ user `vcenter_host`}}",
-            "insecure": "true",
-            "username": "{{ user `vcenter_username`}}",
-            "password": "{{ user `vcenter_password`}}",
-            "datacenter": "{{ user `vmw_datacenter`}}",
-            "folder": "{{ user `vcenter_folder`}}"
-        }
-    ] 
-  }
+  ] 
+}
